@@ -3,17 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Crown, Target, Zap, Users, CheckCircle, ArrowRight, Star, Trophy, Heart, Dumbbell, UtensilsCrossed, Shield, TrendingUp, Phone, Mail, MapPin } from 'lucide-react';
+import {
+  Crown,
+  Target,
+  Zap,
+  CheckCircle,
+  ArrowRight,
+  Trophy,
+  Shield,
+} from 'lucide-react';
 
 function Home() {
   const navigate = useNavigate();
 
   const handlePlanSelect = (planName: string) => {
-    navigate('/login');
+    navigate('/auth?mode=login');
   };
 
   const handleStartJourney = () => {
-    navigate('/login');
+    navigate('/auth?mode=login');
   };
 
   return (
