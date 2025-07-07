@@ -28,11 +28,10 @@ const Profile: React.FC = () => {
     name: user?.name || '',
     email: user?.email || '',
   });
-  const { metrics, setMetrics } = useProgressStore();
+  const { metrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [bodyForm, setBodyForm] = useState(metrics);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
@@ -44,7 +43,6 @@ const Profile: React.FC = () => {
 
   const handleSave = async () => {
     await updateUser({ name: formData.name, email: formData.email, file });
-    setMetrics(bodyForm);
     setIsEditing(false);
     setFile(null);
     setPreview(null);
@@ -55,7 +53,6 @@ const Profile: React.FC = () => {
       name: user?.name || '',
       email: user?.email || '',
     });
-    setBodyForm(metrics);
     setFile(null);
     setPreview(null);
     setIsEditing(false);
@@ -83,12 +80,12 @@ const Profile: React.FC = () => {
   ];
 
   const bodyMetrics = [
-    { label: 'Peso Corporal', value: bodyForm.totalWeight, unit: 'kg', trend: 'down' },
-    { label: 'IMC', value: bodyForm.bmi, unit: '', trend: 'stable' },
-    { label: 'Gordura Corporal', value: bodyForm.bodyFatPercent, unit: '%', trend: 'down' },
-    { label: 'Massa Muscular', value: bodyForm.skeletalMuscleMass, unit: 'kg', trend: 'up' },
-    { label: 'Água Corporal', value: bodyForm.totalBodyWater, unit: 'L', trend: 'stable' },
-    { label: 'TMB', value: bodyForm.bmr, unit: 'kcal', trend: 'up' },
+    { label: 'Peso Corporal', value: metrics.totalWeight, unit: 'kg', trend: 'down' },
+    { label: 'IMC', value: metrics.bmi, unit: '', trend: 'stable' },
+    { label: 'Gordura Corporal', value: metrics.bodyFatPercent, unit: '%', trend: 'down' },
+    { label: 'Massa Muscular', value: metrics.skeletalMuscleMass, unit: 'kg', trend: 'up' },
+    { label: 'Água Corporal', value: metrics.totalBodyWater, unit: 'L', trend: 'stable' },
+    { label: 'TMB', value: metrics.bmr, unit: 'kcal', trend: 'up' },
   ];
 
   const recentActivities = [
@@ -138,7 +135,6 @@ const Profile: React.FC = () => {
             {!isEditing ? (
               <button
                 onClick={() => {
-                  setBodyForm(metrics);
                   setIsEditing(true);
                 }}
                 className="flex items-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
@@ -257,37 +253,6 @@ const Profile: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Métricas corporais em grid responsivo */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {[
-                        { label: 'Peso (kg)', key: 'totalWeight' },
-                        { label: 'IMC', key: 'bmi' },
-                        { label: 'Água Total (L)', key: 'totalBodyWater' },
-                        { label: 'Água Intracelular (L)', key: 'intracellularWater' },
-                        { label: 'Água Extracelular (L)', key: 'extracellularWater' },
-                        { label: 'Massa Magra (kg)', key: 'leanMass' },
-                        { label: 'Massa Muscular (kg)', key: 'skeletalMuscleMass' },
-                        { label: 'Massa de Gordura (kg)', key: 'bodyFatMass' },
-                        { label: '% Gordura Corporal', key: 'bodyFatPercent' },
-                        { label: 'Gordura Braços (%)', key: 'fatArms' },
-                        { label: 'Gordura Tronco (%)', key: 'fatTrunk' },
-                        { label: 'Gordura Pernas (%)', key: 'fatLegs' },
-                        { label: 'Massa Óssea (kg)', key: 'boneMass' },
-                        { label: 'TMB (kcal)', key: 'bmr' },
-                        { label: 'Relação ECW/ICW', key: 'ecwIcwRatio' },
-                        { label: 'Equilíbrio Muscular (%)', key: 'muscleSymmetry' },
-                      ].map((field) => (
-                        <div key={field.key} className="space-y-2">
-                          <label className="block text-sm font-medium text-slate-300">{field.label}</label>
-                          <input
-                            type="number"
-                            value={bodyForm[field.key as keyof typeof bodyForm]}
-                            onChange={(e) => setBodyForm({ ...bodyForm, [field.key]: Number(e.target.value) })}
-                            className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                          />
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 )}
               </div>
