@@ -23,8 +23,9 @@ import About from './pages/About';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
+      <div className="min-h-screen bg-slate-900">
+        <Router>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
@@ -59,8 +60,9 @@ function App() {
             />
             <Route path="" element={<Navigate to="/dashboard" replace />} />
           </Route>
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </div>
     </AuthProvider>
   );
 }
