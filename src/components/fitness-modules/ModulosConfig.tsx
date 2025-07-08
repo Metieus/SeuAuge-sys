@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -389,7 +389,6 @@ const ModuleSelector: React.FC = () => {
 // Componente principal com roteamento
 const FitnessModulesApp: React.FC = () => {
   return (
-    <Router>
       <Routes>
         <Route path="/" element={<ModuleSelector />} />
         <Route
@@ -426,7 +425,6 @@ const FitnessModulesApp: React.FC = () => {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </Router>
   );
 };
 
