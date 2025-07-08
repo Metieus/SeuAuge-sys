@@ -3,13 +3,23 @@ import React from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 import usePlan from '../hooks/usePlan';
 
+const BYPASS_PLAN_GUARD = import.meta.env.VITE_BYPASS_PLAN_GUARD === 'true';
+
 interface PlanGuardProps {
   allowedPlans: string[];
   redirectTo?: string;
   children: React.ReactNode;
 }
 
-const PlanGuard: React.FC<PlanGuardProps> = ({ allowedPlans, redirectTo = '/payment', children }) => {
+const PlanGuard: React.FC<PlanGuardProps> = ({
+  allowedPlans,
+  redirectTo = '/payment',
+  children,
+}) => {
+  if (BYPASS_PLAN_GUARD) {
+    return <>{children}</>;
+  }
+
   const { plan, loading } = usePlan();
   const location = useLocation();
 

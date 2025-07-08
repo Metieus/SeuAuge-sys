@@ -19,6 +19,7 @@ Plataforma web desenvolvida em React + TypeScript para gerenciamento de vídeos 
 VITE_API_URL=http://localhost:3000/api
 VITE_ADMIN_EMAIL=admin@seuauge.com
 VITE_PAYMENT_URL=https://pagamento.exemplo.com
+VITE_BYPASS_PLAN_GUARD=true
 ```
 
 ## Instalação
