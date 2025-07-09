@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly VITE_PAYMENT_URL?: string;
   readonly VITE_ADMIN_EMAIL?: string;
   readonly VITE_BYPASS_PLAN_GUARD?: string;
+  readonly VITE_STORE_ENABLED?: string;
 }
 
 interface ImportMeta {

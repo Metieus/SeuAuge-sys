@@ -5,6 +5,8 @@ import ProductCard from '../components/Products/ProductCard';
 import { mockProducts } from '../data/mockData';
 import AppCard from '../components/Apps/AppCard';
 import { apps } from '../data/apps';
+import ComingSoon from '../components/Common/ComingSoon';
+import { storeEnabled } from '../lib/config';
 
 const Dashboard: React.FC = () => {
   
@@ -59,17 +61,27 @@ const Dashboard: React.FC = () => {
       <section>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white">Loja de Produtos de Saúde</h2>
-          <button className="text-primary hover:text-primary font-medium">Ver Todos</button>
+          {storeEnabled && (
+            <Link to="/store" className="text-primary hover:text-primary font-medium">
+              Ver Todos
+            </Link>
+          )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {storeEnabled ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <ComingSoon
+            title="Em breve"
+            description="Nossa loja de produtos estará disponível em breve."
+          />
+        )}
       </section>
 
     </div>
   );
 };
-
 export default Dashboard;

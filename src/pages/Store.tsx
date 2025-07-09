@@ -6,12 +6,23 @@ import { mockProducts } from '../data/mockData';
 import type { Product } from '../stores/cartStore';
 import AppCard from '../components/Apps/AppCard';
 import { apps } from '../data/apps';
+import ComingSoon from '../components/Common/ComingSoon';
+import { storeEnabled } from '../lib/config';
 
 const Store: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'apps'>('products');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [sortBy, setSortBy] = useState('name');
   const [selectedProduct, setSelectedProduct] = useState(null as Product | null);
+
+  if (!storeEnabled) {
+    return (
+      <ComingSoon
+        title="Loja em Breve"
+        description="Nossos produtos e aplicativos estarão disponíveis em breve."
+      />
+    );
+  }
 
   const categories = ['Todos', 'Suplementos', 'Equipamentos', 'Vitaminas', 'Bem-estar', 'Recuperação'];
   const sortOptions = [

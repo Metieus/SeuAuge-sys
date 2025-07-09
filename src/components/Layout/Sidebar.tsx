@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { PLANS } from '../../data/plans';
+import { storeEnabled } from '../../lib/config';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const menuItems = [
     { icon: Home, label: 'Início', path: '/dashboard' },
     { icon: Play, label: 'Vídeos', path: '/videos' },
-    { icon: ShoppingBag, label: 'Loja', path: '/store' },
+    { icon: ShoppingBag, label: 'Loja', path: '/store', disabled: !storeEnabled },
     { icon: Sparkles, label: 'Planos', path: '/plans' },
     { icon: Heart, label: 'Favoritos', path: '/favorites' },
     { icon: TrendingUp, label: 'Progresso', path: '/progress' },
@@ -74,18 +75,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
+              const baseClasses = `
+                flex items-center px-4 py-3 rounded-xl transition-all duration-200 group
+                ${isActive(item.path)
+                  ? 'bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary-dark/25'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/50'}
+                ${item.disabled ? 'pointer-events-none opacity-50' : ''}
+              `;
+
+              if (item.disabled) {
+                return (
+                  <div key={item.path} className={baseClasses}>
+                    <Icon className="w-5 h-5 mr-4 text-slate-600 dark:text-slate-400" />
+                    <span className="font-medium">{item.label}</span>
+                    <span className="ml-auto text-xs text-slate-400">Em breve</span>
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={onClose}
-                  className={`
-                    flex items-center px-4 py-3 rounded-xl transition-all duration-200 group
-                    ${isActive(item.path)
-                      ? 'bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary-dark/25'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/50'
-                    }
-                  `}
+                  className={baseClasses}
                 >
                   <Icon className={`w-5 h-5 mr-4 ${isActive(item.path) ? 'text-white' : 'text-slate-600 dark:text-slate-400 group-hover:text-primary'}`} />
                   <span className="font-medium">{item.label}</span>

@@ -3,6 +3,8 @@ import { Heart, Play, ShoppingBag } from 'lucide-react';
 import VideoCard from '../components/Videos/VideoCard';
 import ProductCard from '../components/Products/ProductCard';
 import { useFavoritesStore } from '../stores/favoritesStore';
+import ComingSoon from '../components/Common/ComingSoon';
+import { storeEnabled } from '../lib/config';
 
 const Favorites: React.FC = () => {
   const { favoriteVideos, favoriteProducts } = useFavoritesStore();
@@ -10,7 +12,9 @@ const Favorites: React.FC = () => {
 
   const tabs = [
     { id: 'videos', label: 'Vídeos', icon: Play, count: favoriteVideos.length },
-    { id: 'products', label: 'Produtos', icon: ShoppingBag, count: favoriteProducts.length }
+    ...(storeEnabled
+      ? [{ id: 'products', label: 'Produtos', icon: ShoppingBag, count: favoriteProducts.length }]
+      : [])
   ];
 
   return (
@@ -72,28 +76,31 @@ const Favorites: React.FC = () => {
         )}
 
         {activeTab === 'products' && (
-          <div>
-            {favoriteProducts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {favoriteProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <ShoppingBag className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">Nenhum produto favorito ainda</h3>
-                <p className="text-slate-400 mb-4">Comece a comprar e adicione produtos aos seus favoritos</p>
-                <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                  Explorar Produtos
-                </button>
-              </div>
-            )}
-          </div>
+          storeEnabled ? (
+            <div>
+              {favoriteProducts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {favoriteProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <ShoppingBag className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-white mb-2">Nenhum produto favorito ainda</h3>
+                  <p className="text-slate-400 mb-4">Comece a comprar e adicione produtos aos seus favoritos</p>
+                  <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    Explorar Produtos
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <ComingSoon title="Produtos em Breve" description="Você poderá favoritar produtos em breve." />
+          )
         )}
       </div>
     </div>
   );
 };
-
 export default Favorites;
