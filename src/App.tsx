@@ -16,6 +16,7 @@ import Settings from './pages/Settings';
 import Payment from './pages/Payment';
 import Plans from './pages/Plans';
 import AdminDashboard from './pages/AdminDashboard';
+import { Toaster } from 'react-hot-toast';
 const Progress = lazy(() => import('./pages/Progress'));
 const AppsPage = lazy(() => import('./pages/Apps'));
 import About from './pages/About';
@@ -90,8 +91,8 @@ function App() {
           </Route>
         </Routes>
       </div>
+      <Toaster position="top-right" />
     </AuthProvider>
   );
 }
-
 export default App;

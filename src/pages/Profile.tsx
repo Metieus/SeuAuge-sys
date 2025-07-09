@@ -19,9 +19,10 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { PLANS } from '../data/plans';
-import { updateUserProfile } from '../services/user';
+import { updateUserProfile } from '@/services/user';
 import { updateUserPlan } from '../services/plan';
 import { useProgressStore } from '../stores/progressStore';
+import { toast } from 'react-hot-toast';
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
@@ -35,6 +36,7 @@ const Profile: React.FC = () => {
   const { metrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -44,16 +46,29 @@ const Profile: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
     if (selected) {
+      if (!selected.type.startsWith('image/')) {
+        toast.error('Por favor, selecione uma imagem válida.');
+        return;
+      }
       setFile(selected);
       setPreview(URL.createObjectURL(selected));
     }
   };
 
   const handleSave = async () => {
-    await updateUserProfile({ name: formData.name, email: formData.email, file });
-    setIsEditing(false);
-    setFile(null);
-    setPreview(null);
+    try {
+      setSaving(true);
+      await updateUserProfile({ name: formData.name, email: formData.email, file });
+      toast.success('Perfil atualizado com sucesso!');
+      setIsEditing(false);
+      setFile(null);
+      setPreview(null);
+    } catch (err) {
+      console.error('Erro ao salvar perfil:', err);
+      toast.error('Erro ao salvar perfil. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -174,10 +189,11 @@ const Profile: React.FC = () => {
               <div className="flex space-x-3">
                 <button
                   onClick={handleSave}
-                  className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 shadow-lg"
+                  disabled={saving}
+                  className={`flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 shadow-lg ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
                   <Save className="w-4 h-4" />
-                  <span>Salvar</span>
+                  <span>{saving ? 'Salvando...' : 'Salvar'}</span>
                 </button>
                 <button
                   onClick={handleCancel}
