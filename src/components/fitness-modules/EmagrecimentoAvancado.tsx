@@ -44,74 +44,7 @@ import {
 } from '../../lib/fitness/explicacao';
 import { db } from '@/lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
-
-interface UserData {
-  // Dados básicos (obrigatórios)
-  nome: string;
-  idade: number;
-  sexo: 'masculino' | 'feminino';
-  altura: number;
-  peso_atual: number;
-  peso_objetivo: number;
-  prazo: number;
-  
-  // Dados avançados (obrigatórios)
-  nivel_atividade: 'sedentario' | 'leve' | 'moderado' | 'intenso';
-  experiencia_exercicio: 'iniciante' | 'intermediario' | 'avancado';
-  confianca_exercicio: number; // 1-10
-  
-  // Dados opcionais
-  historico_dietas?: string;
-  restricoes_alimentares?: string;
-  horarios_disponiveis?: string[];
-  preferencias_exercicio?: string[];
-  
-  // Dados de composição corporal (opcionais)
-  massa_gorda?: number;
-  massa_magra?: number;
-  massa_muscular?: number;
-  hidratacao?: number;
-  gordura_visceral?: number;
-}
-
-import type { Exercicio } from '@/types/exercicio';
-
-interface PlanoTreino {
-  frequencia_semanal: number;
-  duracao_sessao: number;
-  tipo_principal: string;
-  exercicios: Exercicio[];
-  intensidade: string;
-}
-
-interface WeightLossResults {
-  // Métricas calculadas
-  imc: number;
-  classificacao_imc: string;
-  tmb: number;
-  gasto_energetico: number;
-  calorias_diarias: number;
-  deficit_calorico: number;
-  perda_semanal: number;
-  tempo_estimado: number;
-  
-  // Predições avançadas
-  probabilidade_sucesso: number;
-  perfil_genetico: any;
-  fatores_risco: string[];
-  recomendacoes_personalizadas: string[];
-  
-  // Plano personalizado
-  plano_treino: PlanoTreino;
-  plano_nutricional: any;
-  cronograma_adaptativo: any;
-  
-  // Novos elementos únicos
-  score_motivacional: number;
-  badges_conquistadas: string[];
-  nivel_usuario: string;
-  pontos_experiencia: number;
-}
+import type { UserData, PlanoTreino, WeightLossResults } from '@/types/fitness';
 
 interface ValidationErrors {
   [key: string]: string;

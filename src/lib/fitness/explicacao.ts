@@ -15,7 +15,7 @@ export interface ContextoExplicacao {
   recomendacoes: string[];
 }
 
-import type { UserData, WeightLossResults } from '../../components/fitness-modules/EmagrecimentoAvancado';
+import type { UserData, WeightLossResults } from '@/types/fitness';
 
 export function gerarContextoExplicacao(results: WeightLossResults, user: UserData): ContextoExplicacao {
   return {
