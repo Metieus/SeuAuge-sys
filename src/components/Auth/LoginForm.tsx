@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { authOperations } from '../../lib/supabase';
 import LanguageSelector from '../LanguageSelector';
+import EmailConfirmationHelper from './EmailConfirmationHelper';
 import toast from 'react-hot-toast';
 
 interface LoginFormProps {
@@ -21,6 +22,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [loginProgress, setLoginProgress] = useState<string>('');
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [needsEmailConfirmation, setNeedsEmailConfirmation] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const { t } = useLanguage();
@@ -77,7 +79,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       // Enhanced error handling
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
 
-      if (errorMessage.includes('timeout')) {
+      if (errorMessage.includes('Email não confirmado')) {
+        setNeedsEmailConfirmation(true);
+        setError('Email não confirmado. Use as opções abaixo para resolver.');
+      } else if (errorMessage.includes('timeout')) {
         const timeoutMsg = t('auth.connection_timeout');
         setError(timeoutMsg);
         toast.error(timeoutMsg, { duration: 6000 });
@@ -358,6 +363,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           >
             {t('auth.back_to_login')}
           </motion.button>
+        )}
+
+        {/* Email Confirmation Helper */}
+        {needsEmailConfirmation && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6"
+          >
+            <EmailConfirmationHelper 
+              email={email}
+              onSuccess={() => {
+                setNeedsEmailConfirmation(false);
+                setError(null);
+                navigate('/dashboard');
+              }}
+            />
+          </motion.div>
         )}
       </form>
     </motion.div>

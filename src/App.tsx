@@ -9,6 +9,7 @@ import Layout from "./components/Layout/Layout";
 import PlanGuard from "./components/PlanGuard";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 import { performanceMonitor, registerServiceWorker, addResourceHint } from "./lib/performance";
 
@@ -146,8 +147,14 @@ const ResetPassword = lazy(() =>
   })
 );
 
-// Minimal loading fallback - empty div for instant loading feel
-const LoadingFallback: React.FC = () => <div />;
+// Loading fallback component
+const LoadingFallback: React.FC = () => (
+  <LoadingSpinner 
+    size="md" 
+    text="Carregando página..." 
+    fullScreen={false}
+  />
+);
 
 function App() {
   useEffect(() => {
