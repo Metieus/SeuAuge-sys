@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle, Calendar, Ruler, Weight } from 'lucide-react';
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { validatePassword, validateEmail, validateName, validateBirthdate, validateNumeric, sanitizeInput } from '../../lib/validation';
+import { isSupabaseConfigured } from '../../lib/supabaseClient';
 import EmailVerificationPrompt from './EmailVerificationPrompt';
+import SupabaseSetupPrompt from './SupabaseSetupPrompt';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -27,6 +29,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
   const [showEmailVerification, setShowEmailVerification] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [showSetupPrompt, setShowSetupPrompt] = useState(false);
   const navigate = useNavigate();
   const { register } = useAuth();
 
@@ -125,10 +128,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
       setShowEmailVerification(true);
     } catch (error: unknown) {
       console.error('Registration error:', error);
-      
+
       // Handle specific error codes
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      if (errorMessage.includes('email-already-in-use') || errorMessage.includes('User already registered')) {
+
+      // Show setup prompt if Supabase is not configured
+      if (errorMessage.includes('Sistema de autenticação não configurado') ||
+          errorMessage.includes('Supabase not configured') ||
+          (!isSupabaseConfigured && (errorMessage.includes('conexão') || errorMessage.includes('Failed to fetch') || errorMessage.includes('network')))) {
+        setShowSetupPrompt(true);
+      } else if (errorMessage.includes('email-already-in-use') || errorMessage.includes('User already registered')) {
         setErrors({ email: 'Este email já está em uso. Tente fazer login.' });
       } else if (errorMessage.includes('weak-password')) {
         setErrors({ password: 'Senha muito fraca. Use pelo menos 6 caracteres.' });
@@ -164,6 +173,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
 
   return (
     <>
+      {showSetupPrompt && (
+        <SupabaseSetupPrompt onClose={() => setShowSetupPrompt(false)} />
+      )}
+
       {showEmailVerification && (
         <EmailVerificationPrompt
           email={registeredEmail}

@@ -338,33 +338,31 @@ const Profile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
-      <div className="max-w-7xl mx-auto p-4 space-y-8">
+      <div className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-3 sm:gap-4"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
-                Meu Perfil
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 mt-1">
-                Gerencie suas informações e acompanhe seu progresso
-              </p>
-            </div>
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">
+              Meu Perfil
+            </h1>
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1">
+              Gerencie suas informações e acompanhe seu progresso
+            </p>
           </div>
 
-          {/* Action Buttons - Full width on mobile */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          {/* Action Buttons - Optimized for mobile */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             {!isEditing ? (
               <>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl w-full sm:w-auto"
+                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>Editar Perfil</span>
@@ -374,11 +372,10 @@ const Profile: React.FC = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleCancelSubscription}
-                    className="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg w-full sm:w-auto"
+                    className="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-lg"
                   >
                     <X className="w-4 h-4" />
-                    <span className="hidden sm:inline">Cancelar Assinatura</span>
-                    <span className="sm:hidden">Cancelar</span>
+                    <span>Cancelar Assinatura</span>
                   </motion.button>
                 )}
               </>
@@ -389,7 +386,7 @@ const Profile: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSave}
                   disabled={saving}
-                  className={`flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg w-full sm:w-auto ${saving ? "opacity-60 cursor-not-allowed" : ""}`}
+                  className={`flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-lg ${saving ? "opacity-60 cursor-not-allowed" : ""}`}
                 >
                   <Save className="w-4 h-4" />
                   <span>{saving ? "Salvando..." : "Salvar"}</span>
@@ -398,7 +395,7 @@ const Profile: React.FC = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleCancel}
-                  className="flex items-center justify-center space-x-2 bg-slate-600 hover:bg-slate-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 w-full sm:w-auto"
+                  className="flex items-center justify-center space-x-2 bg-slate-600 hover:bg-slate-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200"
                 >
                   <X className="w-4 h-4" />
                   <span>Cancelar</span>
@@ -409,42 +406,45 @@ const Profile: React.FC = () => {
         </motion.div>
 
         {/* Profile Card */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700"
+          className="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700"
         >
-          <div className="h-32 bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
+          <div className="h-24 sm:h-32 bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
             <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute top-4 right-4">
-              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-lg text-sm font-medium border border-white/20">
-                <Award className="w-4 h-4 mr-2" />
-                {planName}
+            <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+              <div className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium border border-white/20">
+                <Award className="w-3 sm:w-4 h-3 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">{planName}</span>
+                <span className="xs:hidden">{planName.substring(0, 4)}</span>
               </div>
             </div>
             {/* Level Badge */}
-            <div className="absolute top-4 left-4">
-              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-lg text-sm font-medium border border-white/20">
-                <Star className="w-4 h-4 mr-2 text-yellow-500" />
-                Nível {levelSystem.currentLevel}
+            <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
+              <div className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium border border-white/20">
+                <Star className="w-3 sm:w-4 h-3 sm:h-4 mr-1 sm:mr-2 text-yellow-500" />
+                <span className="hidden xs:inline">Nível {levelSystem.currentLevel}</span>
+                <span className="xs:hidden">N{levelSystem.currentLevel}</span>
               </div>
             </div>
             {/* Streak Badge */}
-            <div className="absolute bottom-4 left-4">
-              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-lg text-sm font-medium border border-white/20">
-                <Flame className="w-4 h-4 mr-2 text-orange-500" />
-                {currentStreak} dias
+            <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
+              <div className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium border border-white/20">
+                <Flame className="w-3 sm:w-4 h-3 sm:h-4 mr-1 sm:mr-2 text-orange-500" />
+                <span className="hidden xs:inline">{currentStreak} dias</span>
+                <span className="xs:hidden">{currentStreak}d</span>
               </div>
             </div>
           </div>
 
-          <div className="-mt-16 p-6">
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+          <div className="-mt-12 sm:-mt-16 p-4 sm:p-6">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 sm:gap-6 lg:gap-8">
               {/* Avatar */}
               <div className="relative group">
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.05 }}
-                  className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 flex items-center justify-center ring-4 ring-white dark:ring-slate-800 shadow-lg transition-all duration-300"
+                  className="w-24 sm:w-32 h-24 sm:h-32 rounded-full overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 flex items-center justify-center ring-2 sm:ring-4 ring-white dark:ring-slate-800 shadow-lg transition-all duration-300"
                 >
                   {preview ? (
                     <img
@@ -459,7 +459,7 @@ const Profile: React.FC = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <User className="w-20 h-20 text-white" />
+                    <User className="w-12 sm:w-20 h-12 sm:h-20 text-white" />
                   )}
                 </motion.div>
                 {isEditing && (
@@ -469,9 +469,9 @@ const Profile: React.FC = () => {
                       whileTap={{ scale: 0.9 }}
                       type="button"
                       onClick={() => fileRef.current?.click()}
-                      className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 rounded-full flex items-center justify-center text-white transition-all duration-200 shadow-lg"
+                      className="absolute bottom-0 right-0 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 rounded-full flex items-center justify-center text-white transition-all duration-200 shadow-lg"
                     >
-                      <Camera className="w-5 h-5" />
+                      <Camera className="w-4 sm:w-5 h-4 sm:h-5" />
                     </motion.button>
                     <input
                       ref={fileRef}
@@ -482,8 +482,8 @@ const Profile: React.FC = () => {
                     />
                   </>
                 )}
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-slate-800 flex items-center justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                <div className="absolute -bottom-1 sm:-bottom-2 -right-1 sm:-right-2 w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 flex items-center justify-center">
+                  <div className="w-2 sm:w-3 h-2 sm:h-3 bg-white rounded-full animate-pulse" />
                 </div>
               </div>
 
@@ -651,7 +651,7 @@ const Profile: React.FC = () => {
               className="space-y-8"
             >
               {/* Quick Stats */}
-              <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                 {quickStats.map((stat, index) => {
                   const Icon = stat.icon;
                   return (
@@ -660,21 +660,24 @@ const Profile: React.FC = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 group"
+                      className="bg-white dark:bg-slate-800 rounded-lg p-3 sm:p-4 lg:p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 group"
                     >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
-                          <Icon className="w-6 h-6 text-white" />
+                      <div className="flex items-center justify-between mb-2 sm:mb-4">
+                        <div className={`w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                          <Icon className="w-4 sm:w-5 lg:w-6 h-4 sm:h-5 lg:h-6 text-white" />
                         </div>
-                        <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded-full">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full hidden sm:block">
                           {stat.change}
                         </span>
                       </div>
-                      <div className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+                      <div className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white mb-1">
                         {stat.value}
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         {stat.label}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 sm:hidden">
+                        {stat.change}
                       </div>
                     </motion.div>
                   );
@@ -683,32 +686,35 @@ const Profile: React.FC = () => {
 
               {/* Recent Achievements Preview */}
               {recentAchievements.length > 0 && (
-                <section className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
-                      <Trophy className="w-6 h-6 mr-3 text-yellow-500" />
-                      Conquistas Recentes
+                <section className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                      <Trophy className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-yellow-500" />
+                      <span className="hidden sm:inline">Conquistas Recentes</span>
+                      <span className="sm:hidden">Conquistas</span>
                     </h3>
                     <button
                       onClick={() => setActiveTab('achievements')}
-                      className="text-primary hover:text-emerald-400 text-sm font-medium flex items-center"
+                      className="text-primary hover:text-emerald-400 text-xs sm:text-sm font-medium flex items-center"
                     >
-                      Ver todas <ChevronRight className="w-4 h-4 ml-1" />
+                      <span className="hidden sm:inline">Ver todas</span>
+                      <span className="sm:hidden">Ver +</span>
+                      <ChevronRight className="w-3 sm:w-4 h-3 sm:h-4 ml-1" />
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {recentAchievements.slice(0, 3).map((achievement) => (
                       <motion.div
                         key={achievement.id}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         whileHover={{ scale: 1.02 }}
-                        className={`p-4 rounded-lg border bg-gradient-to-br ${getRarityColor(achievement.rarity)}`}
+                        className={`p-3 sm:p-4 rounded-lg border bg-gradient-to-br ${getRarityColor(achievement.rarity)}`}
                       >
                         <div className="text-center text-white">
-                          <div className="text-3xl mb-2">{achievement.icon}</div>
-                          <h4 className="font-semibold mb-1">{achievement.title}</h4>
-                          <p className="text-xs opacity-90">{achievement.description}</p>
+                          <div className="text-2xl sm:text-3xl mb-2">{achievement.icon}</div>
+                          <h4 className="font-semibold mb-1 text-sm sm:text-base">{achievement.title}</h4>
+                          <p className="text-xs opacity-90 line-clamp-2">{achievement.description}</p>
                           <div className="mt-2 text-xs opacity-75">
                             +{achievement.reward.xp} XP
                           </div>
@@ -751,18 +757,18 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
-                    <Trophy className="w-6 h-6 mr-3 text-yellow-500" />
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                    <Trophy className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-yellow-500" />
                     Minhas Conquistas
                   </h3>
-                  <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                     <span>{unlockedAchievements.length}/{achievements.length} desbloqueadas</span>
-                    <div className="w-32 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                      <div 
+                    <div className="w-full sm:w-32 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                      <div
                         className="bg-gradient-to-r from-primary to-emerald-500 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${(unlockedAchievements.length / achievements.length) * 100}%` }}
                       />
@@ -794,7 +800,7 @@ const Profile: React.FC = () => {
                             ({categoryAchievements.filter(a => a.isUnlocked).length}/{categoryAchievements.length})
                           </span>
                         </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
                           {categoryAchievements.map((achievement, index) => (
                             <motion.div
                               key={achievement.id}
@@ -803,20 +809,20 @@ const Profile: React.FC = () => {
                               transition={{ delay: (catIndex * 0.1) + (index * 0.05) }}
                               whileHover={{ scale: 1.02 }}
                               onClick={() => setShowAchievementDetails(true)}
-                              className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 ${
+                              className={`p-3 sm:p-4 rounded-lg sm:rounded-xl cursor-pointer transition-all duration-200 border-2 ${
                                 achievement.isUnlocked
                                   ? `bg-gradient-to-br ${getRarityColor(achievement.rarity)} border-transparent`
                                   : 'bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50 opacity-60'
                               }`}
                             >
                               <div className="text-center">
-                                <div className="text-3xl mb-2">
-                                  {achievement.isUnlocked ? achievement.icon : <Lock className="w-8 h-8 mx-auto text-slate-400" />}
+                                <div className="text-2xl sm:text-3xl mb-2">
+                                  {achievement.isUnlocked ? achievement.icon : <Lock className="w-6 sm:w-8 h-6 sm:h-8 mx-auto text-slate-400" />}
                                 </div>
-                                <h4 className={`font-semibold mb-1 ${achievement.isUnlocked ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`}>
+                                <h4 className={`font-semibold mb-1 text-xs sm:text-sm ${achievement.isUnlocked ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`}>
                                   {achievement.title}
                                 </h4>
-                                <p className={`text-xs mb-2 ${achievement.isUnlocked ? 'text-white/80' : 'text-slate-500 dark:text-slate-500'}`}>
+                                <p className={`text-xs mb-2 line-clamp-2 ${achievement.isUnlocked ? 'text-white/80' : 'text-slate-500 dark:text-slate-500'}`}>
                                   {achievement.description}
                                 </p>
                                 {!achievement.isUnlocked && (
@@ -863,14 +869,14 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <Target className="w-6 h-6 mr-3 text-primary" />
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6 flex items-center">
+                  <Target className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-primary" />
                   Metas Inteligentes
                 </h3>
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {goals.map((goal, index) => {
                     const progressPercentage = (goal.currentValue / goal.targetValue) * 100;
                     return (
@@ -879,24 +885,24 @@ const Profile: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${
+                        className={`p-4 sm:p-6 rounded-lg sm:rounded-xl border-2 transition-all duration-200 ${
                           goal.completed
                             ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                             : "bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50"
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start justify-between mb-3 sm:mb-4">
                           <div className="flex-1">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <span className="text-2xl">{goal.icon}</span>
-                              <div>
-                                <h4 className="text-lg font-semibold text-slate-900 dark:text-white">
+                            <div className="flex items-start sm:items-center space-x-2 sm:space-x-3 mb-2">
+                              <span className="text-xl sm:text-2xl mt-0.5 sm:mt-0">{goal.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
                                   {goal.title}
                                   {goal.completed && (
                                     <span className="ml-2 text-green-500">✓</span>
                                   )}
                                 </h4>
-                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
                                   {goal.description}
                                 </p>
                               </div>
@@ -925,14 +931,14 @@ const Profile: React.FC = () => {
                             </div>
 
                             {!goal.completed && (
-                              <div className="flex gap-2 mb-4">
+                              <div className="flex flex-col xs:flex-row gap-2 mb-3 sm:mb-4">
                                 <motion.button
                                   whileHover={{ scale: 1.05 }}
                                   whileTap={{ scale: 0.95 }}
                                   onClick={() => handleGoalProgress(goal.id, 1)}
-                                  className="flex items-center space-x-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                  className="flex items-center justify-center space-x-2 bg-primary hover:bg-primary-dark text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 xs:flex-none"
                                 >
-                                  <Plus className="w-4 h-4" />
+                                  <Plus className="w-3 sm:w-4 h-3 sm:h-4" />
                                   <span>+1 {goal.unit}</span>
                                 </motion.button>
                                 {goal.targetValue > 5 && (
@@ -940,9 +946,9 @@ const Profile: React.FC = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => handleGoalProgress(goal.id, 5)}
-                                    className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                    className="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 xs:flex-none"
                                   >
-                                    <Plus className="w-4 h-4" />
+                                    <Plus className="w-3 sm:w-4 h-3 sm:h-4" />
                                     <span>+5 {goal.unit}</span>
                                   </motion.button>
                                 )}
@@ -998,18 +1004,18 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
               {/* Weekly Progress Chart */}
               <WeeklyProgressChart />
 
               {/* Body Metrics */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <TrendingUp className="w-6 h-6 mr-3 text-emerald-500" />
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6 flex items-center">
+                  <TrendingUp className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-emerald-500" />
                   Métricas Corporais
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                   {bodyMetrics.map((metric, index) => {
                     const Icon = metric.icon;
                     const isIMC = metric.label === 'IMC';
@@ -1022,11 +1028,11 @@ const Profile: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                         whileHover={{ scale: 1.02 }}
-                        className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50 cursor-pointer"
+                        className="bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50 cursor-pointer"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-2">
-                            <Icon className="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
+                          <div className="flex items-center space-x-1 sm:space-x-2">
+                            <Icon className="w-4 sm:w-5 h-4 sm:h-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
                             {isIMC ? (
                               <TechnicalTerm
                                 term={metric.label}
@@ -1039,19 +1045,19 @@ const Profile: React.FC = () => {
                                 term={metric.label}
                                 definition="Taxa Metabólica Basal - quantidade de energia que o corpo gasta em repouso"
                                 detailsLink="https://www.mayoclinic.org/healthy-lifestyle/weight-loss/in-depth/metabolism/art-20046508"
-                                className="text-slate-600 dark:text-slate-400 text-sm"
+                                className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm"
                               />
                             ) : (
-                              <span className="text-slate-600 dark:text-slate-400 text-sm">
+                              <span className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                                 {metric.label}
                               </span>
                             )}
                           </div>
                           {getTrendIcon(metric.trend)}
                         </div>
-                        <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <div className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white">
                           {metric.value}{" "}
-                          <span className="text-lg text-slate-500 dark:text-slate-400">
+                          <span className="text-sm sm:text-base lg:text-lg text-slate-500 dark:text-slate-400">
                             {metric.unit}
                           </span>
                         </div>
@@ -1086,29 +1092,29 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700"
+              className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700"
             >
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                <Settings className="w-6 h-6 mr-3 text-slate-600 dark:text-slate-400" />
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6 flex items-center">
+                <Settings className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-slate-600 dark:text-slate-400" />
                 Configurações
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {/* Theme Toggle */}
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50"
+                  className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50"
                 >
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
                     {theme === "dark" ? (
-                      <Moon className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                      <Moon className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     ) : (
-                      <Sun className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                      <Sun className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     )}
                     <div>
-                      <div className="text-slate-900 dark:text-white font-medium">
+                      <div className="text-slate-900 dark:text-white font-medium text-sm sm:text-base">
                         Tema {theme === "dark" ? "Escuro" : "Claro"}
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         Alternar entre tema claro e escuro
                       </div>
                     </div>
@@ -1132,40 +1138,40 @@ const Profile: React.FC = () => {
                 {/* Preferences */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
+                  className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
                   onClick={() => setShowPreferences(true)}
                 >
-                  <div className="flex items-center space-x-4">
-                    <User className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <User className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     <div>
-                      <div className="text-slate-900 dark:text-white font-medium">
+                      <div className="text-slate-900 dark:text-white font-medium text-sm sm:text-base">
                         Personalização
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         Configure suas preferências alimentares e de treino
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
+                  <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
                 </motion.div>
 
                 {/* Data Export */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
+                  className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
                 >
-                  <div className="flex items-center space-x-4">
-                    <Download className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <Download className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     <div>
-                      <div className="text-slate-900 dark:text-white font-medium">
+                      <div className="text-slate-900 dark:text-white font-medium text-sm sm:text-base">
                         Exportar Dados
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         Baixe seus dados de progresso e conquistas
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
+                  <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
                 </motion.div>
               </div>
             </motion.div>
@@ -1179,43 +1185,43 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
+              className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-3 sm:p-4"
               onClick={() => setShowTitleSelector(false)}
             >
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full border border-slate-200 dark:border-slate-700"
+                className="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl p-4 sm:p-6 max-w-md w-full border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
-                    <Crown className="w-6 h-6 mr-2 text-yellow-500" />
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                    <Crown className="w-5 sm:w-6 h-5 sm:h-6 mr-2 text-yellow-500" />
                     Escolher Título
                   </h3>
                   <button
                     onClick={() => setShowTitleSelector(false)}
                     className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                   >
-                    <X className="w-6 h-6" />
+                    <X className="w-5 sm:w-6 h-5 sm:h-6" />
                   </button>
                 </div>
                 
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="space-y-2 sm:space-y-3 max-h-80 sm:max-h-96 overflow-y-auto">
                   <button
                     onClick={() => {
                       setCurrentTitle('');
                       setShowTitleSelector(false);
                     }}
-                    className={`w-full p-3 rounded-lg border-2 text-left transition-all duration-200 ${
-                      !currentTitle 
-                        ? 'border-primary bg-primary/10 text-primary' 
+                    className={`w-full p-2.5 sm:p-3 rounded-lg border-2 text-left transition-all duration-200 ${
+                      !currentTitle
+                        ? 'border-primary bg-primary/10 text-primary'
                         : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                     }`}
                   >
-                    <div className="font-medium">Sem título</div>
-                    <div className="text-sm text-slate-500">Não exibir título</div>
+                    <div className="font-medium text-sm sm:text-base">Sem título</div>
+                    <div className="text-xs sm:text-sm text-slate-500">Não exibir título</div>
                   </button>
                   
                   {unlockedTitles.map((title, index) => (
@@ -1228,14 +1234,14 @@ const Profile: React.FC = () => {
                         setCurrentTitle(title);
                         setShowTitleSelector(false);
                       }}
-                      className={`w-full p-3 rounded-lg border-2 text-left transition-all duration-200 ${
-                        currentTitle === title 
-                          ? 'border-primary bg-primary/10 text-primary' 
+                      className={`w-full p-2.5 sm:p-3 rounded-lg border-2 text-left transition-all duration-200 ${
+                        currentTitle === title
+                          ? 'border-primary bg-primary/10 text-primary'
                           : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                       }`}
                     >
-                      <div className="font-medium">"{title}"</div>
-                      <div className="text-sm text-slate-500">Desbloqueado por conquista</div>
+                      <div className="font-medium text-sm sm:text-base">"{title}"</div>
+                      <div className="text-xs sm:text-sm text-slate-500">Desbloqueado por conquista</div>
                     </motion.button>
                   ))}
                   

@@ -338,7 +338,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Enhanced error handling without exposing sensitive information
       console.error("Login error:", err.message);
 
-      if (err.message?.includes('Invalid login credentials')) {
+      if (err.message?.includes('Supabase not configured')) {
+        throw new Error("Sistema de autenticação não configurado. Por favor, configure o Supabase primeiro.");
+      } else if (err.message?.includes('Invalid login credentials')) {
         throw new Error("Email ou senha incorretos. Verifique suas credenciais.");
       } else if (err.message?.includes('Too many requests')) {
         throw new Error("Muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.");
@@ -348,8 +350,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         throw new Error("Usuário não encontrado. Verifique o email digitado ou crie uma nova conta.");
       } else if (err.message?.includes('timeout')) {
         throw new Error("Tempo limite excedido. Verifique sua conexão com a internet e tente novamente.");
-      } else if (err.message?.includes('network')) {
-        throw new Error("Erro de conexão. Verifique sua internet e tente novamente.");
+      } else if (err.message?.includes('network') || err.message?.includes('Failed to fetch')) {
+        throw new Error("Erro de conexão. Verifique sua internet e se o Supabase está configurado corretamente.");
       } else {
         throw new Error("Erro interno. Tente novamente em alguns minutos.");
       }
