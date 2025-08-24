@@ -8,7 +8,9 @@ import {
   AlertCircle,
   Send,
   Eye,
-  EyeOff
+  EyeOff,
+  Clock,
+  UserCheck
 } from 'lucide-react';
 import { authOperations } from '../../lib/supabase';
 import toast from 'react-hot-toast';
@@ -28,214 +30,235 @@ const EmailConfirmationHelper: React.FC<EmailConfirmationHelperProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
 
   const handleResendConfirmation = async () => {
-    if (!email) {
-      toast.error('Por favor, insira um email válido');
+    if (!email.trim()) {
+      toast.error('Digite um email válido');
       return;
     }
 
-    setIsResending(true);
     try {
-      const { error } = await authOperations.resendConfirmation(email);
+      setIsResending(true);
+      await authOperations.resend({
+        type: 'signup',
+        email: email.trim(),
+      });
       
-      if (error) {
-        toast.error(`Erro ao reenviar confirmação: ${error.message}`);
+      toast.success('Email de confirmação reenviado! Verifique sua caixa de entrada.');
+    } catch (error: any) {
+      console.error('Erro ao reenviar email:', error);
+      
+      if (error.message?.includes('already confirmed')) {
+        toast.success('Este email já foi confirmado! Você pode fazer login.');
+        setShowLoginForm(true);
+      } else if (error.message?.includes('not found')) {
+        toast.error('Email não encontrado. Verifique se está correto.');
       } else {
-        toast.success('Email de confirmação reenviado! Verifique sua caixa de entrada');
+        toast.error('Erro ao reenviar email. Tente novamente.');
       }
-    } catch (error) {
-      toast.error('Erro ao reenviar confirmação');
-      console.error('Resend confirmation error:', error);
     } finally {
       setIsResending(false);
     }
   };
 
   const handleCheckConfirmation = async () => {
-    if (!email || !password) {
-      toast.error('Por favor, insira email e senha');
+    if (!email.trim()) {
+      toast.error('Digite um email válido');
       return;
     }
 
-    setIsChecking(true);
     try {
-      const { data, error } = await authOperations.signInWithPassword(email, password);
-      
+      setIsChecking(true);
+      // Tentar fazer login para verificar se o email foi confirmado
+      const { data, error } = await authOperations.signInWithPassword({
+        email: email.trim(),
+        password: 'temp-check-password', // Senha temporária para teste
+      });
+
       if (error) {
-        if (error.message.includes('Email not confirmed')) {
-          toast.error('Email ainda não foi confirmado. Verifique sua caixa de entrada');
+        if (error.message?.includes('Email not confirmed')) {
+          toast.error('Email ainda não foi confirmado. Verifique sua caixa de entrada.');
+        } else if (error.message?.includes('Invalid login credentials')) {
+          toast.success('Email confirmado! Agora você pode fazer login.');
+          setShowLoginForm(true);
         } else {
-          toast.error(`Erro de login: ${error.message}`);
+          toast.error('Erro ao verificar confirmação: ' + error.message);
         }
-      } else if (data.user) {
-        toast.success('Email confirmado! Login realizado com sucesso');
-        onSuccess?.();
       }
-    } catch (error) {
-      toast.error('Erro ao verificar confirmação');
-      console.error('Check confirmation error:', error);
+    } catch (error: any) {
+      console.error('Erro ao verificar confirmação:', error);
+      toast.error('Erro ao verificar confirmação. Tente novamente.');
     } finally {
       setIsChecking(false);
     }
   };
 
-  const handleDirectLogin = async () => {
-    if (!email || !password) {
-      toast.error('Por favor, insira email e senha');
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      toast.error('Preencha email e senha');
       return;
     }
 
-    setIsLoggingIn(true);
     try {
-      const { data, error } = await authOperations.signInWithPassword(email, password);
-      
+      setIsLoggingIn(true);
+      const { data, error } = await authOperations.signInWithPassword({
+        email: email.trim(),
+        password: password,
+      });
+
       if (error) {
-        if (error.message.includes('Email not confirmed')) {
-          toast.error('Email não confirmado. Clique em "Reenviar Confirmação"');
+        if (error.message?.includes('Email not confirmed')) {
+          toast.error('Email não confirmado. Verifique sua caixa de entrada.');
+        } else if (error.message?.includes('Invalid login credentials')) {
+          toast.error('Email ou senha incorretos');
         } else {
-          toast.error(`Erro de login: ${error.message}`);
+          toast.error('Erro no login: ' + error.message);
         }
-      } else if (data.user) {
+      } else {
         toast.success('Login realizado com sucesso!');
         onSuccess?.();
       }
-    } catch (error) {
-      toast.error('Erro ao fazer login');
-      console.error('Login error:', error);
+    } catch (error: any) {
+      console.error('Erro no login:', error);
+      toast.error('Erro no login. Tente novamente.');
     } finally {
       setIsLoggingIn(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg border">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
-      >
-        {/* Header */}
-        <div className="text-center">
-          <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-            <Mail className="w-6 h-6 text-blue-600" />
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            Confirmação de Email
-          </h2>
-          <p className="text-gray-600 text-sm">
-            Seu email precisa ser confirmado para acessar a conta
-          </p>
-        </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 space-y-4"
+    >
+      <div className="flex items-center space-x-3">
+        <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+          Problema com Confirmação de Email?
+        </h3>
+      </div>
 
+      <p className="text-blue-700 dark:text-blue-300 text-sm">
+        Se você não recebeu o email de confirmação ou está tendo problemas para fazer login, 
+        use as opções abaixo:
+      </p>
+
+      <div className="space-y-4">
         {/* Email Input */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
             Email
           </label>
           <input
             type="email"
-            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={!!initialEmail}
+            className="w-full px-3 py-2 border border-blue-300 dark:border-blue-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-blue-800 dark:text-white"
+            placeholder="Digite seu email"
           />
         </div>
 
-        {/* Password Input */}
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-            Senha
-          </label>
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Sua senha"
-              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-400" />
-              ) : (
-                <Eye className="h-4 w-4 text-gray-400" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="space-y-3">
-          {/* Reenviar Confirmação */}
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleResendConfirmation}
-            disabled={isResending || !email}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isResending || !email.trim()}
+            className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Send className="w-4 h-4" />
-            {isResending ? 'Reenviando...' : 'Reenviar Confirmação'}
+            {isResending ? (
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4 mr-2" />
+            )}
+            {isResending ? 'Reenviando...' : 'Reenviar Email'}
           </button>
 
-          {/* Verificar Confirmação */}
           <button
             onClick={handleCheckConfirmation}
-            disabled={isChecking || !email || !password}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isChecking || !email.trim()}
+            className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <RefreshCw className={`w-4 h-4 ${isChecking ? 'animate-spin' : ''}`} />
+            {isChecking ? (
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <UserCheck className="w-4 h-4 mr-2" />
+            )}
             {isChecking ? 'Verificando...' : 'Verificar Confirmação'}
           </button>
+        </div>
 
-          {/* Tentar Login Direto */}
-          <button
-            onClick={handleDirectLogin}
-            disabled={isLoggingIn || !email || !password}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        {/* Login Form */}
+        {showLoginForm && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="border-t border-blue-200 dark:border-blue-700 pt-4 space-y-4"
           >
-            {isLoggingIn ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : (
-              <CheckCircle className="w-4 h-4" />
-            )}
-            {isLoggingIn ? 'Fazendo Login...' : 'Tentar Login'}
-          </button>
-        </div>
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <span className="text-sm text-green-700 dark:text-green-300">
+                Email confirmado! Faça login abaixo:
+              </span>
+            </div>
 
-        {/* Instructions */}
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-          <h3 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
-            <AlertCircle className="w-4 h-4" />
-            Instruções:
-          </h3>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Verifique sua caixa de entrada (e spam)</li>
-            <li>• Clique no link de confirmação no email</li>
-            <li>• Se não recebeu, clique em "Reenviar Confirmação"</li>
-            <li>• Após confirmar, tente fazer login novamente</li>
+            <div>
+              <label className="block text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+                Senha
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 pr-10 border border-blue-300 dark:border-blue-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-blue-800 dark:text-white"
+                  placeholder="Digite sua senha"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogin}
+              disabled={isLoggingIn || !password.trim()}
+              className="w-full flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoggingIn ? (
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <UserCheck className="w-4 h-4 mr-2" />
+              )}
+              {isLoggingIn ? 'Fazendo Login...' : 'Fazer Login'}
+            </button>
+          </motion.div>
+        )}
+
+        {/* Help Tips */}
+        <div className="bg-blue-100 dark:bg-blue-800/50 rounded-lg p-4 space-y-2">
+          <h4 className="font-medium text-blue-900 dark:text-blue-100 text-sm">
+            💡 Dicas para resolver problemas:
+          </h4>
+          <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+            <li>• Verifique sua caixa de spam/lixo eletrônico</li>
+            <li>• Aguarde alguns minutos após o registro</li>
+            <li>• Certifique-se de que o email está correto</li>
+            <li>• Tente reenviar o email de confirmação</li>
+            <li>• Se o problema persistir, entre em contato com o suporte</li>
           </ul>
         </div>
-
-        {/* Troubleshooting */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-          <h3 className="font-semibold text-yellow-900 mb-2">
-            Problemas comuns:
-          </h3>
-          <ul className="text-sm text-yellow-800 space-y-1">
-            <li>• Email não aparece? Verifique a pasta spam</li>
-            <li>• Link expirado? Reenvie a confirmação</li>
-            <li>• Ainda com problemas? Entre em contato</li>
-          </ul>
-        </div>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 };
 

@@ -1,7 +1,28 @@
 [
   {
-    "origin": ["http://localhost:5173"],
-    "method": ["GET", "POST", "PUT"],
+    "origin": [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://seuaugesys.web.app/"
+      "https://seuaugesys.web.app/"
+    ],
+    "method": [
+      "GET",
+      "HEAD",
+      "POST",
+      "PUT",
+      "DELETE"
+    ],
+    "responseHeader": [
+      "Content-Type",
+      "Content-Length",
+      "Content-Range",
+      "Accept-Ranges",
+      "Cache-Control",
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Methods",
+      "Access-Control-Allow-Headers"
+    ],
     "maxAgeSeconds": 3600
   }
 ]

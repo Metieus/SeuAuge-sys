@@ -303,165 +303,148 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    // Input validation and sanitization
-    if (!email || !password) {
-      throw new Error('Email e senha são obrigatórios');
-    }
-
-    const sanitizedEmail = sanitizeInput(email.toLowerCase());
-    
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(sanitizedEmail)) {
-      throw new Error('Formato de email inválido');
-    }
-
+  const login = async (email: string, password: string): Promise<void> => {
     try {
-      const { data, error } = await authOperations.signInWithPassword(
-        sanitizedEmail,
-        password
-      );
+      setLoading(true);
+      setError(null);
 
-      if (error) throw error;
+      // Sanitizar inputs
+      const sanitizedEmail = sanitizeInput(email);
+      const sanitizedPassword = sanitizeInput(password);
 
-      if (data.user) {
-        const mapped = await mapSupabaseUser(data.user);
-        setUser(mapped);
+      // Validar inputs
+      if (!validateEmail(sanitizedEmail)) {
+        throw new Error('Email inválido');
+      }
 
-        // Audit log (in production, send to secure logging service)
-        if (import.meta.env.DEV) {
-          console.log("Usuario autenticado:", mapped.email, "Role:", mapped.role);
+      if (!validatePassword(sanitizedPassword)) {
+        throw new Error('Senha deve ter pelo menos 6 caracteres');
+      }
+
+      // Tentar login
+      const { data, error } = await authOperations.signInWithPassword({
+        email: sanitizedEmail,
+        password: sanitizedPassword,
+      });
+
+      if (error) {
+        console.error('Login error:', error);
+        
+        // Tratamento específico para diferentes tipos de erro
+        if (error.message?.includes('Email not confirmed')) {
+          throw new Error('Email não confirmado. Verifique sua caixa de entrada e clique no link de confirmação.');
+        } else if (error.message?.includes('Invalid login credentials')) {
+          throw new Error('Email ou senha incorretos. Verifique suas credenciais.');
+        } else if (error.message?.includes('Too many requests')) {
+          throw new Error('Muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.');
+        } else if (error.message?.includes('timeout')) {
+          throw new Error('Tempo limite excedido. Verifique sua conexão com a internet.');
+        } else if (error.message?.includes('network')) {
+          throw new Error('Erro de conexão. Verifique sua internet e tente novamente.');
+        } else {
+          throw new Error(`Erro no login: ${error.message}`);
         }
       }
-    } catch (err: AuthError | any) {
-      // Enhanced error handling without exposing sensitive information
-      console.error("Login error:", err.message);
 
-      if (err.message?.includes('Supabase not configured')) {
-        throw new Error("Sistema de autenticação não configurado. Por favor, configure o Supabase primeiro.");
-      } else if (err.message?.includes('Invalid login credentials')) {
-        throw new Error("Email ou senha incorretos. Verifique suas credenciais.");
-      } else if (err.message?.includes('Too many requests')) {
-        throw new Error("Muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.");
-      } else if (err.message?.includes('Email not confirmed')) {
-        throw new Error("Email não confirmado. Verifique sua caixa de entrada e clique no link de confirmação.");
-      } else if (err.message?.includes('User not found')) {
-        throw new Error("Usuário não encontrado. Verifique o email digitado ou crie uma nova conta.");
-      } else if (err.message?.includes('timeout')) {
-        throw new Error("Tempo limite excedido. Verifique sua conexão com a internet e tente novamente.");
-      } else if (err.message?.includes('network') || err.message?.includes('Failed to fetch')) {
-        throw new Error("Erro de conexão. Verifique sua internet e se o Supabase está configurado corretamente.");
+      if (data?.user) {
+        // Mapear dados do usuário
+        const mappedUser = await mapSupabaseUser(data.user);
+        setUser(mappedUser);
+        
+        // Inicializar sistemas do usuário
+        await initializeUserSystems(mappedUser);
+        
+        console.log('✅ Login successful:', mappedUser.email);
       } else {
-        throw new Error("Erro interno. Tente novamente em alguns minutos.");
+        throw new Error('Erro inesperado no login');
       }
+
+    } catch (error) {
+      console.error('Login error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido no login';
+      setError(errorMessage);
+      throw error; // Re-throw para que o componente possa tratar
+    } finally {
+      setLoading(false);
     }
   };
 
-  const register = async (
-    email: string,
-    password: string,
-    name: string,
-    birthdate: string,
-  ) => {
-    // Input validation and sanitization
-    if (!email || !password || !name || !birthdate) {
-      throw new Error('Todos os campos são obrigatórios');
-    }
-
-    const sanitizedEmail = sanitizeInput(email.toLowerCase());
-    const sanitizedName = sanitizeInput(name);
-    
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(sanitizedEmail)) {
-      throw new Error('Formato de email inválido');
-    }
-
-    // Enhanced password validation
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.isValid) {
-      throw new Error(passwordValidation.message || 'Senha inválida');
-    }
-
-    // Name validation
-    if (sanitizedName.length < 2 || sanitizedName.length > 50) {
-      throw new Error('Nome deve ter entre 2 e 50 caracteres');
-    }
-
-    // Age validation (basic check for reasonable birth date)
-    const birthDate = new Date(birthdate);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    if (age < 13 || age > 120) {
-      throw new Error('Data de nascimento inválida');
-    }
-
+  const register = async (email: string, password: string, userData?: Partial<User>): Promise<void> => {
     try {
-      const { data, error } = await authOperations.signUp(
-        sanitizedEmail,
-        password,
-        {
+      setLoading(true);
+      setError(null);
+
+      // Sanitizar inputs
+      const sanitizedEmail = sanitizeInput(email);
+      const sanitizedPassword = sanitizeInput(password);
+
+      // Validar inputs
+      if (!validateEmail(sanitizedEmail)) {
+        throw new Error('Email inválido');
+      }
+
+      if (!validatePassword(sanitizedPassword)) {
+        throw new Error('Senha deve ter pelo menos 6 caracteres');
+      }
+
+      // Tentar registro
+      const { data, error } = await authOperations.signUp({
+        email: sanitizedEmail,
+        password: sanitizedPassword,
+        options: {
           data: {
-            name: sanitizedName,
-            birthdate,
-            role: 'user', // Default role
+            full_name: userData?.full_name || '',
+            avatar_url: userData?.avatar_url || '',
+            role: userData?.role || 'user',
           },
-        }
-      );
+        },
+      });
 
-      if (error) throw error;
-
-      if (data.user) {
-        // Create user profile in database
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
-            id: data.user.id,
-            email: sanitizedEmail,
-            name: sanitizedName,
-            birthdate,
-            role: 'user',
-          });
-
-        if (profileError) {
-          console.error('Error creating user profile:', profileError);
-        }
-
-        const mapped = await mapSupabaseUser(data.user);
-        setUser(mapped);
-
-        // Initialize systems for new user with welcome bonus
-        try {
-          await initializeUserSystems(data.user, null);
-          
-          const levelStore = useLevelStore.getState();
-          levelStore.addXP(50, '🎉 Bem-vindo ao Meu Auge!', 'bonus');
-        } catch (error) {
-          console.error('Erro ao inicializar sistemas para novo usuário:', error);
-        }
-
-        // Audit log
-        if (import.meta.env.DEV) {
-          console.log("Usuario registrado:", mapped.email);
+      if (error) {
+        console.error('Registration error:', error);
+        
+        // Tratamento específico para diferentes tipos de erro
+        if (error.message?.includes('already registered')) {
+          throw new Error('Este email já está registrado. Tente fazer login ou use outro email.');
+        } else if (error.message?.includes('password')) {
+          throw new Error('Senha muito fraca. Use uma senha mais forte.');
+        } else if (error.message?.includes('email')) {
+          throw new Error('Email inválido ou não suportado.');
+        } else if (error.message?.includes('Too many requests')) {
+          throw new Error('Muitas tentativas de registro. Aguarde alguns minutos antes de tentar novamente.');
+        } else if (error.message?.includes('timeout')) {
+          throw new Error('Tempo limite excedido. Verifique sua conexão com a internet.');
+        } else if (error.message?.includes('network')) {
+          throw new Error('Erro de conexão. Verifique sua internet e tente novamente.');
+        } else {
+          throw new Error(`Erro no registro: ${error.message}`);
         }
       }
-    } catch (err: AuthError | any) {
-      console.error("Registration error:", err.message);
 
-      if (err.message?.includes('User already registered')) {
-        throw new Error("Este email já está em uso. Tente fazer login ou use outro email.");
-      } else if (err.message?.includes('Password should be at least')) {
-        throw new Error("Senha muito fraca. Use uma senha com pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas e números.");
-      } else if (err.message?.includes('Signups not allowed')) {
-        throw new Error("Registros temporariamente desabilitados. Entre em contato com o suporte.");
-      } else if (err.message?.includes('timeout')) {
-        throw new Error("Tempo limite excedido. Verifique sua conexão e tente novamente.");
-      } else if (err.message?.includes('network')) {
-        throw new Error("Erro de conexão. Verifique sua internet e tente novamente.");
+      if (data?.user) {
+        // Para registro, não fazer login automático se confirmação de email for necessária
+        if (data.user.email_confirmed_at) {
+          // Email já confirmado (pode acontecer em alguns casos)
+          const mappedUser = await mapSupabaseUser(data.user);
+          setUser(mappedUser);
+          await initializeUserSystems(mappedUser);
+          console.log('✅ Registration successful (email already confirmed):', mappedUser.email);
+        } else {
+          // Email precisa ser confirmado
+          console.log('✅ Registration successful, email confirmation required:', data.user.email);
+          throw new Error('Registro realizado com sucesso! Verifique sua caixa de entrada para confirmar o email.');
+        }
       } else {
-        throw new Error("Erro no registro. Tente novamente em alguns minutos.");
+        throw new Error('Erro inesperado no registro');
       }
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido no registro';
+      setError(errorMessage);
+      throw error; // Re-throw para que o componente possa tratar
+    } finally {
+      setLoading(false);
     }
   };
 
